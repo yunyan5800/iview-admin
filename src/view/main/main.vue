@@ -1,34 +1,37 @@
 <template>
   <Layout style="height: 100%" class="main">
-    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
-      <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
-        <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
-        <div class="logo-con">
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
-          <img v-show="collapsed" :src="minLogo" key="min-logo" />
-        </div>
-      </side-menu>
-    </Sider>
-    <Layout>
-      <Header class="header-con">
-        <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <user :user-avator="userAvator"/>
-          <language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
-          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
-        </header-bar>
-      </Header>
-      <Content class="main-content-con">
-        <Layout class="main-layout-con">
-          <div class="tag-nav-wrapper">
-            <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
+    <Header class="header">asdfasdfds</Header>
+    <Layout class="content-index">
+      <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
+        <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
+          <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
+          <div class="logo-con">
+            <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
+            <img v-show="collapsed" :src="minLogo" key="min-logo" />
           </div>
-          <Content class="content-wrapper">
-            <keep-alive :include="cacheList">
-              <router-view/>
-            </keep-alive>
-          </Content>
-        </Layout>
-      </Content>
+        </side-menu>
+      </Sider>
+      <Layout>
+        <Header class="header-con">
+          <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
+            <user :user-avator="userAvator" />
+            <language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local" />
+            <fullscreen v-model="isFullscreen" style="margin-right: 10px;" />
+          </header-bar>
+        </Header>
+        <Content class="main-content-con">
+          <Layout class="main-layout-con">
+            <div class="tag-nav-wrapper">
+              <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag" />
+            </div>
+            <Content class="content-wrapper">
+              <keep-alive :include="cacheList">
+                <router-view/>
+              </keep-alive>
+            </Content>
+          </Layout>
+        </Content>
+      </Layout>
     </Layout>
   </Layout>
 </template>
@@ -73,7 +76,11 @@ export default {
       return this.$store.state.user.avatorImgPath
     },
     cacheList () {
-      return this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []
+      return this.tagNavList.length
+        ? this.tagNavList
+          .filter(item => !(item.meta && item.meta.notCache))
+          .map(item => item.name)
+        : []
     },
     menuList () {
       return this.$store.getters.menuList
@@ -83,15 +90,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
-      'setBreadCrumb',
-      'setTagNavList',
-      'addTag',
-      'setLocal'
-    ]),
-    ...mapActions([
-      'handleLogin'
-    ]),
+    ...mapMutations(['setBreadCrumb', 'setTagNavList', 'addTag', 'setLocal']),
+    ...mapActions(['handleLogin']),
     turnToPage (route) {
       let { name, params, query } = {}
       if (typeof route === 'string') name = route
@@ -135,7 +135,7 @@ export default {
     }
   },
   watch: {
-    '$route' (newRoute) {
+    $route (newRoute) {
       this.setBreadCrumb(newRoute.matched)
       this.setTagNavList(getNewTagList(this.tagNavList, newRoute))
     }
@@ -155,21 +155,29 @@ export default {
     this.$Notice.info({
       title: '想快速上手，去看文档吧',
       duration: 0,
-      render: (h) => {
-        return h('p', {
-          style: {
-            fontSize: '13px'
-          }
-        }, [
-          '点击',
-          h('a', {
-            attrs: {
-              href: 'https://lison16.github.io/iview-admin-doc/#/',
-              target: '_blank'
+      render: h => {
+        return h(
+          'p',
+          {
+            style: {
+              fontSize: '13px'
             }
-          }, 'iview-admin2.0文档'),
-          '快速查看'
-        ])
+          },
+          [
+            '点击',
+            h(
+              'a',
+              {
+                attrs: {
+                  href: 'https://lison16.github.io/iview-admin-doc/#/',
+                  target: '_blank'
+                }
+              },
+              'iview-admin2.0文档'
+            ),
+            '快速查看'
+          ]
+        )
       }
     })
   }

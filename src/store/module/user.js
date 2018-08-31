@@ -1,4 +1,4 @@
-import { login, logout, getUserInfo } from '@/api/user'
+import { login, logout, getUserInfo, getTokenTicket } from '@/api/user'
 import { setToken, getToken } from '@/libs/util'
 
 export default {
@@ -29,20 +29,37 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin ({ commit }, {userName, password}) {
+    handleLogin ({ commit }, { userName, password }) {
       userName = userName.trim()
-      return new Promise((resolve, reject) => {
-        login({
-          userName,
-          password
-        }).then(res => {
-          const data = res.data
-          commit('setToken', data.token)
-          resolve()
-        }).catch(err => {
-          reject(err)
+      if (!getToken()) {
+        getTokenTicket().then(() => {
+          return new Promise((resolve, reject) => {
+            login({
+              userName,
+              password
+            }).then(res => {
+              const data = res.data
+              console.log(data)
+              resolve()
+            }).catch(err => {
+              reject(err)
+            })
+          })
         })
-      })
+      } else {
+        return new Promise((resolve, reject) => {
+          login({
+            userName,
+            password
+          }).then(res => {
+            const data = res.data
+            console.log(data)
+            resolve()
+          }).catch(err => {
+            reject(err)
+          })
+        })
+      }
     },
     // 退出登录
     handleLogOut ({ state, commit }) {

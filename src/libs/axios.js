@@ -84,5 +84,11 @@ class httpRequest {
     this.queue[options.url] = instance
     return instance(options)
   }
+  getToken (options) {
+    var instance = this.create()
+    options = Object.assign({}, options)
+    this.queue[options.url] = instance
+    return instance(options)
+  }
 }
 export default httpRequest
